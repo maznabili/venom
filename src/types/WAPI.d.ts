@@ -212,12 +212,27 @@ interface WAPI {
     title: string
   ) => Promise<object>;
   sendMessage: (to: string, content: string) => Promise<Object>;
+  sendListMenu: (
+    to: string,
+    title: string,
+    subTitle: string,
+    description: string,
+    buttonText: string,
+    menu: Array<any>
+  ) => Promise<Object>;
+  checkChat: (contactId: string) => Promise<Object>;
   sendMessageMentioned: (...args: any) => any;
   sendMessageOptions: (
     chat: any,
     content: any,
     options?: any
   ) => Promise<string>;
+  sendButtons: (
+    to: string,
+    title: string,
+    buttons: [],
+    subtitle: string
+  ) => Promise<Object>;
   sendMessageWithThumb: (
     thumb: string,
     url: string,
@@ -249,6 +264,12 @@ interface WAPI {
   returnReply: (message: object) => object;
   onStreamChange: (callback: Function) => void;
   setGroupDescription: (groupId: string, description: string) => object;
+  setGroupTitle: (groupId: string, title: string) => object;
+  setGroupSettings: (
+    groupId: string,
+    settings: string,
+    value: boolean
+  ) => Promise<object>;
 }
 
 declare global {

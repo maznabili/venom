@@ -75,6 +75,45 @@ export class SenderLayer extends ListenerLayer {
   }
 
   /**
+   * Send List menu
+   * @param to the numberid xxx@c.us
+   * @param title the titulo
+   * @param subtitle the subtitle
+   * @param description the description
+   * @param buttonText the name button
+   * @param menu List menu
+   */
+  public async sendListMenu(
+    to: string,
+    title: string,
+    subTitle: string,
+    description: string,
+    buttonText: string,
+    menu: Array<any>
+  ): Promise<Object> {
+    return new Promise(async (resolve, reject) => {
+      const result = await this.page.evaluate(
+        ({ to, title, subTitle, description, buttonText, menu }) => {
+          return WAPI.sendListMenu(
+            to,
+            title,
+            subTitle,
+            description,
+            buttonText,
+            menu
+          );
+        },
+        { to, title, subTitle, description, buttonText, menu }
+      );
+      if (result['erro'] == true) {
+        return reject(result);
+      } else {
+        return resolve(result);
+      }
+    });
+  }
+
+  /**
    * Sends a text message to given chat
    * @param to chat id: xxxxx@us.c
    * @param content text message
@@ -251,19 +290,24 @@ export class SenderLayer extends ListenerLayer {
       }
     });
   }
-
+  /**
+   * Sends messages with options
+   * @param to Chat id
+   * @param content text string
+   * @param options object
+   */
   public async sendMessageOptions(
-    chat: any,
+    to: any,
     content: any,
     options?: any
   ): Promise<Message> {
     return new Promise(async (resolve, reject) => {
       try {
         const messageId = await this.page.evaluate(
-          ({ chat, content, options }) => {
-            return WAPI.sendMessageOptions(chat, content, options);
+          ({ to, content, options }) => {
+            return WAPI.sendMessageOptions(to, content, options);
           },
-          { chat, content, options }
+          { to, content, options }
         );
         const result = (await this.page.evaluate(
           (messageId: any) => WAPI.getMessageById(messageId),
@@ -272,6 +316,73 @@ export class SenderLayer extends ListenerLayer {
         resolve(result);
       } catch (error) {
         reject(error);
+      }
+    });
+  }
+
+  /**
+   * Send buttons reply
+   * @param {string} to the numberid xxx@c.us
+   * @param {string} title the titulo
+   * @param {string} subtitle the subtitle
+   * @param {array} buttons arrays
+   */
+  public async sendButtons(
+    to: string,
+    title: string,
+    buttons: [],
+    subtitle: string
+  ): Promise<object> {
+    return new Promise(async (resolve, reject) => {
+      const typeFunction = 'sendButtons';
+      const type = 'string';
+      const obj = 'object';
+      const check = [
+        {
+          param: 'to',
+          type: type,
+          value: to,
+          function: typeFunction,
+          isUser: true
+        },
+        {
+          param: 'title',
+          type: type,
+          value: title,
+          function: typeFunction,
+          isUser: true
+        },
+        {
+          param: 'subtitle',
+          type: type,
+          value: subtitle,
+          function: typeFunction,
+          isUser: true
+        },
+        {
+          param: 'buttons',
+          type: obj,
+          value: buttons,
+          function: typeFunction,
+          isUser: true
+        }
+      ];
+      const validating = checkValuesSender(check);
+      if (typeof validating === 'object') {
+        return reject(validating);
+      }
+
+      const result = await this.page.evaluate(
+        ({ to, title, buttons, subtitle }) => {
+          return WAPI.sendButtons(to, title, buttons, subtitle);
+        },
+        { to, title, buttons, subtitle }
+      );
+
+      if (result['erro'] == true) {
+        return reject(result);
+      } else {
+        return resolve(result);
       }
     });
   }

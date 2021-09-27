@@ -52,19 +52,31 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNMMNMNMMMNMMNNMMMMMMMMMMMM
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNNNMMNNNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 */
-export const _serializeNumberStatusObj = (obj) => {
-  if (obj == undefined) {
-    return null;
-  }
 
-  return Object.assign(
-    {},
-    {
-      id: obj.jid,
-      status: obj.status,
-      isBusiness: obj.biz === true,
-      canReceiveMessage: obj.status === 200,
-      profilePic: undefined
-    }
-  );
-};
+export enum GroupSettings {
+  /**
+   * Define how can send message in the group
+   * `true` only admins
+   * `false` everyone
+   */
+  ANNOUNCEMENT = 'announcement',
+
+  /**
+   * Define how can edit the group data
+   * `true` only admins
+   * `false` everyone
+   */
+  RESTRICT = 'restrict',
+
+  /**
+   * Non-Documented
+   */
+  NO_FREQUENTLY_FORWARDED = 'no_frequently_forwarded',
+
+  /**
+   * Enable or disable temporary messages
+   * `true` to enable
+   * `false` to disable
+   */
+  EPHEMERAL = 'ephemeral'
+}

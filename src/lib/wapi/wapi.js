@@ -157,7 +157,13 @@ import {
   checkIdMessage,
   returnReply,
   logout,
-  setGroupDescription
+  setGroupDescription,
+  setGroupTitle,
+  setGroupSettings,
+  sendButtons,
+  sendListMenu,
+  checkChat,
+  checkNumberStatus
 } from './functions';
 import {
   base64ToFile,
@@ -232,6 +238,8 @@ if (typeof window.WAPI === 'undefined') {
   window.WAPI.checkIdMessage = checkIdMessage;
   window.WAPI.returnReply = returnReply;
   window.WAPI.getStore = getStore;
+  window.WAPI.checkChat = checkChat;
+  window.WAPI.checkNumberStatus = checkNumberStatus;
 
   //Profile
   window.WAPI.setProfilePic = setProfilePic;
@@ -268,8 +276,11 @@ if (typeof window.WAPI === 'undefined') {
   window.WAPI.demoteParticipant = demoteParticipant;
   window.WAPI.joinGroup = joinGroup;
   window.WAPI.setGroupDescription = setGroupDescription;
+  window.WAPI.setGroupTitle = setGroupTitle;
+  window.WAPI.setGroupSettings = setGroupSettings;
 
   // Chatting functions
+  window.WAPI.sendListMenu = sendListMenu;
   window.WAPI.sendChatstate = sendChatstate;
   window.WAPI.sendMessageWithThumb = sendMessageWithThumb;
   window.WAPI.processMessageObj = processMessageObj;
@@ -304,6 +315,7 @@ if (typeof window.WAPI === 'undefined') {
   window.WAPI.markUnseenMessage = markUnseenMessage;
   window.WAPI.sendLinkPreview = sendLinkPreview;
   window.WAPI.sendMessageOptions = sendMessageOptions;
+  window.WAPI.sendButtons = sendButtons;
 
   //////block functions
   window.WAPI.blockContact = blockContact;
@@ -447,37 +459,6 @@ if (typeof window.WAPI === 'undefined') {
         ''
       )
     );
-  };
-
-  window.WAPI._serializeNumberStatusObj = (obj) => {
-    if (obj == undefined) {
-      return null;
-    }
-
-    return Object.assign(
-      {},
-      {
-        id: obj.jid,
-        status: obj.status,
-        isBusiness: obj.biz === true,
-        canReceiveMessage: obj.status === 200
-      }
-    );
-  };
-
-  window.WAPI.checkNumberStatus = async function (id) {
-    try {
-      const result = await window.Store.WapQuery.queryExist(id);
-      if (result.jid === undefined) throw 404;
-      const data = window.WAPI._serializeNumberStatusObj(result);
-      if (data.status == 200) data.numberExists = true;
-      return data;
-    } catch (e) {
-      return window.WAPI._serializeNumberStatusObj({
-        status: e,
-        jid: new window.Store.WidFactory.createWid(id)
-      });
-    }
   };
 
   window.WAPI.getChatIsOnline = async function (chatId) {

@@ -52,18 +52,22 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNMMNMNMMMNMMNNMMMMMMMMMMMM
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNNNMMNNNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 */
+
+import * as chalk from 'chalk';
+
 import { readFileSync } from 'fs';
+
+import { Browser, Page } from 'puppeteer';
+
+import { deleteFiles, checkingCloses } from '../api/helpers';
 import { Whatsapp } from '../api/whatsapp';
 import { CreateConfig, defaultOptions } from '../config/create-config';
+import { tokenSession } from '../config/tokenSession.config';
+import { checkFileJson } from '../api/helpers/check-token-file';
+import { SocketState, SocketStream } from '../api/model/enum';
 import { SessionTokenCkeck, saveToken } from './auth';
 import { initWhatsapp, initBrowser } from './browser';
-import { checkUpdates, welcomeScreen } from './welcome';
-import { getSpinnies } from '../utils/spinnies';
-import { SocketState, SocketStream } from '../api/model/enum';
-import { deleteFiles, checkingCloses } from '../api/helpers';
-import { tokenSession } from '../config/tokenSession.config';
-import { Browser, Page } from 'puppeteer';
-import { checkFileJson } from '../api/helpers/check-token-file';
+import { welcomeScreen } from './welcome';
 /**
  * A callback will be received, informing the status of the qrcode
  */
@@ -155,40 +159,27 @@ export async function create(
   }
   let browserToken: any;
 
-  const spinnies = getSpinnies({
-    disableSpins: options ? options.disableSpins : false
-  });
-
   const mergedOptions = { ...defaultOptions, ...options };
+
+  const logger = mergedOptions.logger;
 
   if (!mergedOptions.disableWelcome) {
     welcomeScreen();
   }
 
-  if (mergedOptions.updatesLog) {
-    const ver = await checkUpdates(spinnies);
-    if (ver === false) {
-      throw `Unable to access: "https://www.npmjs.com", check your internet`;
-    }
-  }
-
   // Initialize whatsapp
   if (mergedOptions.browserWS) {
-    spinnies.add(`browser-${session}`, {
-      text: `Waiting... checking the wss server...`
-    });
+    logger.info('Initializing browser...', { session });
   } else {
-    spinnies.add(`browser-${session}`, {
-      text: 'Waiting... checking the browser...'
-    });
+    logger.info('Initializing browser wss...', { session });
   }
 
   const browser = await initBrowser(session, mergedOptions);
 
   // Erro of connect wss
   if (typeof browser === 'string' && browser === 'connect') {
-    spinnies.fail(`browser-${session}`, {
-      text: `Error when try to connect ${mergedOptions.browserWS}`
+    logger.info('Error when try to connect ' + mergedOptions.browserWS, {
+      session
     });
     statusFind && statusFind('serverWssNotConnected', this.session);
     throw `Error when try to connect ${mergedOptions.browserWS}`;
@@ -196,35 +187,35 @@ export async function create(
 
   // Erro open browser
   if (typeof browser === 'string' && browser === 'launch') {
-    spinnies.fail(`browser-${session}`, {
-      text: `Error no open browser....`
+    logger.info('Error no open browser.... ', {
+      session
     });
     statusFind && statusFind('noOpenBrowser', this.session);
     throw `Error no open browser....`;
   }
 
   if (mergedOptions.browserWS) {
-    spinnies.succeed(`browser-${session}`, {
-      text: `Has been properly connected to the wss server`
+    logger.info('Has been properly connected to the wss server', {
+      session
     });
   } else {
-    spinnies.succeed(`browser-${session}`, {
-      text: `Browser successfully opened`
+    logger.info('Browser successfully opened', {
+      session
     });
   }
 
   if (!mergedOptions.browserWS) {
-    spinnies.add(`browser-${session}`, {
-      text: 'checking headless...'
+    logger.info('checking headless...', {
+      session
     });
 
     if (mergedOptions.headless) {
-      spinnies.succeed(`browser-${session}`, {
-        text: 'headless option is active, browser hidden'
+      logger.info('headless option is active, browser hidden', {
+        session
       });
     } else {
-      spinnies.succeed(`browser-${session}`, {
-        text: 'headless option is disabled, browser visible'
+      logger.info('headless option is disabled, browser visible', {
+        session
       });
     }
   }
@@ -245,9 +236,8 @@ export async function create(
     if (SessionTokenCkeck(browserSessionToken)) {
       browserToken = browserSessionToken;
     }
-
-    spinnies.add(`whatzapp-${session}`, {
-      text: 'Checking page...'
+    logger.info('Checking page...', {
+      session
     });
 
     // Initialize whatsapp
@@ -263,14 +253,14 @@ export async function create(
     }
 
     if (page === false) {
-      spinnies.fail(`whatzapp-${session}`, {
-        text: 'Error accessing the page: "https://web.whatsapp.com"'
+      logger.info('Error accessing the page: "https://web.whatsapp.com"', {
+        session
       });
       throw 'Error when trying to access the page: "https://web.whatsapp.com"';
     }
 
-    spinnies.succeed(`whatzapp-${session}`, {
-      text: 'Page successfully accessed'
+    logger.info(`${chalk.green('Page successfully accessed')}`, {
+      session
     });
 
     const client = new Whatsapp(page, session, mergedOptions);
@@ -280,46 +270,52 @@ export async function create(
         statusFind && statusFind('chatsAvailable', session);
       }
       if (stateStream === SocketStream.DISCONNECTED) {
-        let onQR: boolean = await page.evaluate(() => {
-          if (
-            document.querySelector('canvas') &&
-            document.querySelectorAll('#startup').length == 0
-          ) {
-            return true;
-          } else {
-            return false;
+        await page.waitForFunction(
+          () => {
+            if (
+              document.querySelector('canvas') &&
+              document.querySelectorAll('#startup').length == 0
+            ) {
+              return true;
+            }
+          },
+          {
+            timeout: 0,
+            polling: 100
           }
-        });
-        if (onQR === true && checkFileJson(mergedOptions, session)) {
+        );
+        if (checkFileJson(mergedOptions, session)) {
           if (statusFind) {
             statusFind('desconnectedMobile', session);
           }
-          deleteFiles(mergedOptions, session, spinnies);
+          deleteFiles(mergedOptions, session, logger);
         }
       }
     });
 
-    client.onStateChange((state) => {
+    client.onStateChange(async (state) => {
       if (state === SocketState.PAIRING) {
-        const device = page.evaluate(() => {
-          if (document.querySelectorAll('#startup').length) {
-            return true;
-          } else {
-            return false;
+        await page.waitForFunction(
+          () => {
+            if (document.querySelectorAll('#startup').length) {
+              return true;
+            }
+          },
+          {
+            timeout: 0,
+            polling: 100
           }
-        });
-        if (device) {
-          if (statusFind) {
-            statusFind('deviceNotConnected', session);
-          }
+        );
+        if (statusFind) {
+          statusFind('deviceNotConnected', session);
         }
       }
       if (mergedOptions.createPathFileToken) {
         if (state === SocketState.CONNECTED) {
           setTimeout(() => {
             saveToken(page, session, mergedOptions).catch((e) => {
-              spinnies.update(`browser-${session}`, {
-                text: e
+              logger.info(e, {
+                session
               });
             });
           }, 1000);
@@ -374,6 +370,7 @@ export async function create(
         polling: 100
       }
     );
+
     return client;
   }
 }
