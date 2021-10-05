@@ -163,7 +163,8 @@ import {
   sendButtons,
   sendListMenu,
   checkChat,
-  checkNumberStatus
+  checkNumberStatus,
+  sendCheckType
 } from './functions';
 import {
   base64ToFile,
@@ -188,7 +189,8 @@ import {
   _serializeMessageObj,
   _serializeNumberStatusObj,
   _serializeProfilePicThumb,
-  _serializeRawObj
+  _serializeRawObj,
+  _serializeMeObj
 } from './serializers';
 import { getStore } from './store/get-store';
 
@@ -240,6 +242,7 @@ if (typeof window.WAPI === 'undefined') {
   window.WAPI.getStore = getStore;
   window.WAPI.checkChat = checkChat;
   window.WAPI.checkNumberStatus = checkNumberStatus;
+  window.WAPI.sendCheckType = sendCheckType;
 
   //Profile
   window.WAPI.setProfilePic = setProfilePic;
@@ -262,6 +265,7 @@ if (typeof window.WAPI === 'undefined') {
   window.WAPI._serializeMessageObj = _serializeMessageObj;
   window.WAPI._serializeNumberStatusObj = _serializeNumberStatusObj;
   window.WAPI._serializeProfilePicThumb = _serializeProfilePicThumb;
+  window.WAPI._serializeMeObj = _serializeMeObj;
 
   // Group Functions
   window.WAPI.createGroup = createGroup;
