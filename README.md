@@ -1,3 +1,4 @@
+
 # 🕷Venom Bot🕸
 
 [![npm version](https://img.shields.io/npm/v/venom-bot.svg?color=green)](https://www.npmjs.com/package/venom-bot)
@@ -13,13 +14,15 @@
 
 > Venom is a high-performance system developed with JavaScript to create a bot for WhatsApp, support for creating any interaction, such as customer service, media sending, sentence recognition based on artificial intelligence and all types of design architecture for WhatsApp.
 
+
+## Get started fast and easy! Official API!
+
 <p align="center">
   <a href="https://github.com/orkestral/venom/blob/master/docs/getting-started/creating-client.md">Getting Started</a> •
   <a href="https://github.com/orkestral/venom/blob/master/docs/getting-started/basic-functions.md">Basic Function</a> •
   <a href="https://github.com/orkestral/venom/tree/master/docs/getting-started">Documentation</a>
 </p>
 
-## Get started fast and easy! Official API!
 
 <p>
 It's a high-performance alternative API to whatzapp, you can send, text messages, files, images, videos and more.
@@ -34,35 +37,51 @@ It uses a set of well-defined operations that apply to all information resources
 Use it in your favorite language like PHP, Python, C# and others. as long as your language is supported with the HTTP protocol, you will save time and money. you don't need to know how Venom works, we have the complete API documentation, in a professional way!
 </p>
 
-## Get our official API! Contact us!
+## Get our official API Venom ! Contact us!
 
 <a target="_blank" href="https://web.whatsapp.com/send?phone=556181590153&text=I%20want%20access%20to%20API%20Venom" target="_blank"><img title="whatzapp" height="100" width="375" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/WhatsApp_logo.svg/2000px-WhatsApp_logo.svg.png"></a>
-
-## Need help? Talk to our support!
-
-<a target="_blank" href="https://web.whatsapp.com/send?phone=556181590153&text=Can%20you%20help%20me?" target="_blank"><img title="whatzapp" height="100" width="375" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/WhatsApp_logo.svg/2000px-WhatsApp_logo.svg.png"></a>
 
 ## Venom group support free on Telegram
 
 <a target="_blank" href="https://t.me/joinchat/G8wxNXidWBo1ZDYx" target="_blank"><img title="Telegram" height="100" width="375" src="https://user-images.githubusercontent.com/66584466/117182238-7d1d8980-adac-11eb-9a70-e32f90c3d4e5.png"></a>
 
+
+## Meet the Superchats
+<br>
+<a href='https://github.com/orkestral/superchats'><img src='https://github.com/orkestral/superchats/raw/main/img/superchats.png' height='60' alt='SuperChats' aria-label='https://github.com/orkestral/superchats' /></a>
+<br>
+<br>
+
+**SuperChats** is a premium library with unique features that control Whatsapp functions with socket.
+With Superchats you can build service bots, multiservice chats or any system that uses Whatsapp
+
+**Superchats** is a premium version of **Venom**, with exclusive features and support for companies and developers worldwide
+<br>
+<a href='https://github.com/orkestral/superchats'>https://github.com/orkestral/superchats</a>
+
+## Buy a license Superchats
+
+The value of the license is $30 monthly dollars, to acquire contact in whatsapp by clicking on the image below !!
+
+<a target="_blank" href="https://web.whatsapp.com/send?phone=556181590153&text=I%20want%20to%20buy%201%20license" target="_blank"><img title="whatzapp" height="100" width="375" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/WhatsApp_logo.svg/2000px-WhatsApp_logo.svg.png"></a>
+
 ## 🕷🕷 Functions Venom🕷🕷
 
-|                                                               |     |
-| ------------------------------------------------------------- | --- |
-| 🚻 Automatic QR Refresh                                       | ✔   |
-| 📁 Send **text, image, video, audio and docs**                | ✔   |
-| 👥 Get **contacts, chats, groups, group members, Block List** | ✔   |
-| 📞 Send contacts                                              | ✔   |
-| Send Buttons                                                  | ✔   |
-| Send stickers                                                 | ✔   |
-| Send stickers GIF                                             | ✔   |
-| Multiple Sessions                                             | ✔   |
-| ⏩ Forward Messages                                           | ✔   |
-| 📥 Receive message                                            | ✔   |
-| 👤 insert user section                                        | ✔   |
-| 📍 Send location!!                                            | ✔   |
-| 🕸🕸 **and much more**                                          | ✔   |
+|                                                               |   |
+|---------------------------------------------------------------|---|
+| 🚻 Automatic QR Refresh                                       | ✔ |
+| 📁 Send **text, image, video, audio and docs**                | ✔ |
+| 👥 Get **contacts, chats, groups, group members, Block List** | ✔ |
+| 📞 Send contacts                                              | ✔ |
+| Send Buttons                                                  | ✔ |
+| Send stickers                                                 | ✔ |
+| Send stickers GIF                                             | ✔ |
+| Multiple Sessions                                             | ✔ |
+| ⏩ Forward Messages                                            | ✔ |
+| 📥 Receive message                                            | ✔ |
+| 👤 insert user section                                        | ✔ |
+| 📍 Send location!!                                            | ✔ |
+| 🕸🕸 **and much more**                                        | ✔ |
 
 Documentation at https://orkestral.github.io/venom/index.html
 
@@ -84,7 +103,7 @@ Installing the current repository "you can download the beta version from the cu
 > npm i github:orkestral/venom
 ```
 
-## Getting started
+## Getting started Multidevice and Normal
 
 ```javascript
 // Supports ES6
@@ -92,7 +111,10 @@ Installing the current repository "you can download the beta version from the cu
 const venom = require('venom-bot');
 
 venom
-  .create()
+  .create({
+    session: 'session-name', //name of session
+    multidevice: false // for version not multidevice use false.(default: true)
+  })
   .then((client) => start(client))
   .catch((erro) => {
     console.log(erro);
@@ -159,6 +181,7 @@ venom
     },
     // options
     {
+      multidevice: false, // for version not multidevice use false.(default: true)
       folderNameToken: 'tokens', //folder name when saving tokens
       mkdirFolderToken: '', //folder directory tokens, just inside the venom folder, example:  { mkdirFolderToken: '/node_modules', } //will save the tokens folder in the node_modules directory
       headless: true, // Headless chrome
@@ -173,7 +196,11 @@ venom
       disableWelcome: true, // Will disable the welcoming message which appears in the beginning
       updatesLog: true, // Logs info updates automatically in terminal
       autoClose: 60000, // Automatically closes the venom-bot only when scanning the QR code (default 60 seconds, if you want to turn it off, assign 0 or false)
-      createPathFileToken: false //creates a folder when inserting an object in the client's browser, to work it is necessary to pass the parameters in the function create browserSessionToken
+      createPathFileToken: false, // creates a folder when inserting an object in the client's browser, to work it is necessary to pass the parameters in the function create browserSessionToken
+      chromiumVersion: '818858', // Version of the browser that will be used. Revision strings can be obtained from omahaproxy.appspot.com.
+      addProxy: [''], // Add proxy server exemple : [e1.p.webshare.io:01, e1.p.webshare.io:01]
+      userProxy: '', // Proxy login username
+      userPass: '' // Proxy password
     },
     // BrowserSessionToken
     // To receive the client's token use the function await clinet.getSessionTokenBrowser()
@@ -203,7 +230,7 @@ venom
 Gets the return if the session is `isLogged` or `notLogged` or `browserClose` or `qrReadSuccess` or `qrReadFail` or `autocloseCalled` or `desconnectedMobile` or `deleteToken` or `chatsAvailable` or `deviceNotConnected` or `serverWssNotConnected` or `noOpenBrowser` or `Create session wss return "serverClose" case server for close`
 
 | Status                  | Condition                                                                                                                                                      |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|-------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `isLogged`              | When the user is already logged in to the browser                                                                                                              |
 | `notLogged`             | When the user is not connected to the browser, it is necessary to scan the QR code through the cell phone in the option WhatsApp Web                           |
 | `browserClose`          | If the browser is closed this parameter is returned                                                                                                            |
@@ -230,7 +257,9 @@ venom
       //Create session wss return "serverClose" case server for close
       console.log('Session name: ', session);
     },
-    undefined
+    {
+      multidevice: false // for version not multidevice use false.(default: true)
+    }
   )
   .then((client) => {
     start(client);
@@ -783,6 +812,13 @@ await client.getWAVersion();
 ## Events
 
 ```javascript
+
+//Listens to all new messages
+//To receiver or recipient
+client.onAnyMessage(message => {
+  ...
+};
+
 // Listen to messages
 client.onMessage(message => {
   ...
@@ -920,8 +956,6 @@ await client.blockContact('000000000000@c.us');
 // Unlocks contacts (returns true if it works)
 await client.unblockContact('000000000000@c.us');
 
-// Retrieve a number profile / check if contact is a valid whatsapp number
-const profile = await client.getNumberProfile('000000000000@c.us');
 ```
 
 ## Misc

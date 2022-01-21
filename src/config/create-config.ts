@@ -52,7 +52,13 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNMMNMNMMMNMMNNMMMMMMMMMMMM
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNNNMMNNNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 */
-import { Browser, BrowserContext, LaunchOptions, Page } from 'puppeteer';
+import {
+  Browser,
+  BrowserContext,
+  LaunchOptions,
+  BrowserLaunchArgumentOptions,
+  Page
+} from 'puppeteer';
 
 import { Logger } from 'winston';
 
@@ -62,6 +68,10 @@ import { puppeteerConfig } from './puppeteer.config';
 
 // Server config
 export interface CreateConfig {
+  /** enabled multidevice
+   * @default true
+   */
+  multidevice?: boolean;
   /** folder name when saving tokens
    * @default 'tokens'
    */
@@ -101,7 +111,7 @@ export interface CreateConfig {
   /**
    * Will be passed to puppeteer.launch
    */
-  puppeteerOptions?: LaunchOptions;
+  puppeteerOptions?: LaunchOptions | BrowserLaunchArgumentOptions;
   /**
    * Pass a external browser instance, can be used with electron
    */
@@ -146,12 +156,39 @@ export interface CreateConfig {
    */
   waitForLogin?: boolean;
   /**
+   * automatically download Chromium browser
+   * @default true
+   */
+  BrowserFetcher?: boolean;
+  /**
+   * Version of the browser that will be used
+   * @default '818858'
+   */
+  chromiumVersion?: string;
+  userDataDir?: string;
+  /**
    * Wait for in chat to return a instance of {@link Whatsapp}
    * @default false
    */
   logger?: Logger;
+  /**
+   * Add proxy server
+   * @default null
+   */
+  addProxy?: string[];
+  /**
+   * Proxy username
+   * @default null
+   */
+  userProxy?: string;
+  /**
+   * Proxy password
+   * @default null
+   */
+  userPass?: string;
 }
 export const defaultOptions: CreateConfig = {
+  multidevice: true,
   folderNameToken: 'tokens',
   mkdirFolderToken: '',
   headless: true,
@@ -168,5 +205,8 @@ export const defaultOptions: CreateConfig = {
   autoClose: 120000,
   createPathFileToken: true,
   waitForLogin: true,
+  BrowserFetcher: true,
+  chromiumVersion: '818858',
+  userDataDir: '',
   logger: defaultLogger
 };

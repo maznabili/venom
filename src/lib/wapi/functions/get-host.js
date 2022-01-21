@@ -53,6 +53,8 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNNNMMNNNMMMMMMMMMMMMMMMMM
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 */
 export async function getHost() {
-  const obj = Store.Me.attributes;
-  return await WAPI._serializeMeObj(obj);
+  const fromwWid = await Store.MaybeMeUser.getMaybeMeUser();
+  const idUser = await WAPI.sendExist(fromwWid._serialized);
+  const infoUser = await Store.MyStatus.getStatus(idUser);
+  return await WAPI._serializeMeObj(infoUser);
 }

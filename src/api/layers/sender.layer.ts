@@ -214,7 +214,7 @@ export class SenderLayer extends ListenerLayer {
   /**
    * Sends image message base64
    * @param to Chat id
-   * @param base64 File path, http link or base64Encoded
+   * @param base64 File path, http link or base64Encoded. base64 MUST start with "data:(yourMimeType);base64,"
    * @param filename
    * @param caption
    */
@@ -261,7 +261,7 @@ export class SenderLayer extends ListenerLayer {
         obj = {
           erro: true,
           to: to,
-          text: 'Invalid base64!'
+          text: 'Invalid base64 or missing MimeType!'
         };
         return reject(obj);
       }
@@ -438,6 +438,7 @@ export class SenderLayer extends ListenerLayer {
    * @param url
    * @param title
    * @param description
+   * @param text
    * @param chatId
    */
   public async sendMessageWithThumb(
@@ -445,17 +446,19 @@ export class SenderLayer extends ListenerLayer {
     url: string,
     title: string,
     description: string,
+    text: string,
     chatId: string
   ) {
     return this.page.evaluate(
-      ({ thumb, url, title, description, chatId }) => {
-        WAPI.sendMessageWithThumb(thumb, url, title, description, chatId);
+      ({ thumb, url, title, description, chatId, text }) => {
+        WAPI.sendMessageWithThumb(thumb, url, title, description, text, chatId);
       },
       {
         thumb,
         url,
         title,
         description,
+        text,
         chatId
       }
     );
@@ -520,7 +523,7 @@ export class SenderLayer extends ListenerLayer {
   /**
    * Send audio base64
    * @param to Chat id
-   * @param base64 base64 data
+   * @param base64 base64 data. MUST start with "data:(yourMimeType);base64,"
    */
   public async sendVoiceBase64(to: string, base64: string) {
     return new Promise(async (resolve, reject) => {
@@ -530,7 +533,7 @@ export class SenderLayer extends ListenerLayer {
         obj = {
           erro: true,
           to: to,
-          text: 'Invalid base64!'
+          text: 'Invalid base64 or missing MimeType!'
         };
         return reject(obj);
       }
@@ -610,7 +613,7 @@ export class SenderLayer extends ListenerLayer {
    * Sends file
    * base64 parameter should have mime type already defined
    * @param to Chat id
-   * @param base64 base64 data
+   * @param base64 base64 data. MUST start with "data:(yourMimeType);base64,"
    * @param filename
    * @param caption
    */
@@ -627,7 +630,7 @@ export class SenderLayer extends ListenerLayer {
         obj = {
           erro: true,
           to: to,
-          text: 'Invalid base64!'
+          text: 'Invalid base64 or missing MimeType!'
         };
         return reject(obj);
       }

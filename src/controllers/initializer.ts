@@ -55,9 +55,13 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 
 import * as chalk from 'chalk';
 
-import { readFileSync } from 'fs';
+import * as fs from 'fs';
+
+import { fstat, readFileSync } from 'fs';
 
 import { Browser, Page } from 'puppeteer';
+
+import path = require('path');
 
 import { deleteFiles, checkingCloses } from '../api/helpers';
 import { Whatsapp } from '../api/whatsapp';
@@ -166,7 +170,6 @@ export async function create(
   if (!mergedOptions.disableWelcome) {
     welcomeScreen();
   }
-
   // Initialize whatsapp
   if (mergedOptions.browserWS) {
     logger.info('Initializing browser...', { session });
@@ -174,8 +177,7 @@ export async function create(
     logger.info('Initializing browser wss...', { session });
   }
 
-  const browser = await initBrowser(session, mergedOptions);
-
+  const browser = await initBrowser(session, mergedOptions, logger);
   // Erro of connect wss
   if (typeof browser === 'string' && browser === 'connect') {
     logger.info('Error when try to connect ' + mergedOptions.browserWS, {
@@ -274,7 +276,7 @@ export async function create(
           () => {
             if (
               document.querySelector('canvas') &&
-              document.querySelectorAll('#startup').length == 0
+              document.querySelectorAll('._2Nr6U').length == 0
             ) {
               return true;
             }
@@ -297,7 +299,7 @@ export async function create(
       if (state === SocketState.PAIRING) {
         await page.waitForFunction(
           () => {
-            if (document.querySelectorAll('#startup').length) {
+            if (document.querySelectorAll('._2Nr6U').length) {
               return true;
             }
           },
@@ -355,21 +357,23 @@ export async function create(
       console.log(`\nDebug: \x1b[34m${debugURL}\x1b[0m`);
     }
     await page.waitForSelector('#app .two', { visible: true }).catch(() => {});
-    await page.waitForFunction(
-      () => {
-        if (
-          window.Store &&
-          window.Store.WidFactory &&
-          window.Store.WidFactory.createWid
-        ) {
-          return true;
+    await page
+      .waitForFunction(
+        () => {
+          if (
+            window.Store &&
+            window.Store.WidFactory &&
+            window.Store.WidFactory.createWid
+          ) {
+            return true;
+          }
+        },
+        {
+          timeout: 0,
+          polling: 100
         }
-      },
-      {
-        timeout: 0,
-        polling: 100
-      }
-    );
+      )
+      .catch(() => {});
 
     return client;
   }
